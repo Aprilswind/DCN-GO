@@ -7,14 +7,14 @@ import (
 
 func main() {
 	socket, err := net.DialUDP("udp4", nil, &net.UDPAddr{
-		IP:   net.IPv4(192, 168, 1, 103),
+		IP:   net.IPv4(0, 0, 0, 0),
 		Port: 8080,
 	})
 	if err != nil {
 		fmt.Println("connection failed!", err)
 		return
 	}
-	// defer socket.Close()
+	defer socket.Close()
 	senddata := []byte("hello server!")
 	_, err = socket.Write(senddata)
 	if err != nil {
