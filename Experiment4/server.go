@@ -22,7 +22,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		go handleListener(conn)
 	}
 }
