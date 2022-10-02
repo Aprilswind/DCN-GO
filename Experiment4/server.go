@@ -1,36 +1,32 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net"
-	"time"
 )
 
 func main() {
-	tcpAddr, err := net.ResolveTCPAddr("tcp", ":8888")
+	listener, err := net.Listen("tcp", "localhost:8080")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(">>>Error<<<", err)
 	}
-
-	listener, err := net.ListenTCP("tcp", tcpAddr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(">>>Error<<<", err)
 		}
-		go handleListener(conn)
+		for {
+			var input string
+			fmt.Print("Scanning >>> ")
+			fmt.Scanln(&input)
+			conn.Write([]byte(input))
+			buffer := make([]byte, 1024)
+			mLen, err := conn.Read(buffer)
+			if err != nil {
+				fmt.Println(">>>Error<<<", err)
+			}
+			fmt.Println("Received", string(buffer[:mLen]))
+		}
 	}
 }
 
-func handleListener(conn net.Conn) {
-	defer conn.Close()
-	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-
-	t := time.Now()
-	msg := t.Format(time.RFC1123)
-	conn.Write([]byte(msg))
-}

@@ -2,28 +2,27 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
-	"time"
 )
 
 func main() {
 
-	serverIp := "127.0.0.1"
-	serverPort := "8888"
-
-	conn, err := net.Dial("tcp", serverIp+":"+serverPort)
+	conn, err := net.Dial("tcp", "localhost:8080")
 	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
-
-	readBuf := make([]byte, 1024)
-	conn.SetReadDeadline(time.Now().Add(10 * time.Second))
-	readLen, err := conn.Read(readBuf)
-	if err != nil {
-		log.Fatal(err)
+		fmt.Println(">>>Error<<<", err)
 	}
 
-	fmt.Println(string(readBuf[:readLen]))
+	for {
+		buffer := make([]byte, 1024)
+		mLen, err := conn.Read(buffer)
+		if err != nil {
+			fmt.Println(">>>Error<<<", err)
+		}
+		fmt.Println("Received", string(buffer[:mLen]))
+		var input string
+		fmt.Print("Scanning >>> ")
+		fmt.Scanln(&input)
+		conn.Write([]byte(input))
+	}
+
 }
